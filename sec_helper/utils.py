@@ -143,8 +143,6 @@ class LmcdVectorizer:
         if preprocess:
             document = simple_preprocess(document)
         
-        #self.load_dictionary()
-
         categories = list(self.sentiment_dictionary.keys())
         counts = []
         for category in categories:
@@ -153,8 +151,11 @@ class LmcdVectorizer:
         if normalize:
             counts = [value / len(document) for value in counts]
 
+        counts.append(len(document))
+        categories.append("n_words_in_document")
+
         if raw_counts:
             return counts
         else:
-            return pd.DataFrame(data=[counts], columns=categories)
+            return pd.DataFrame(data = [counts], columns=categories)
 
