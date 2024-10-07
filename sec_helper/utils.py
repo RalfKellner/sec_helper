@@ -5,6 +5,8 @@ import io
 import statsmodels.api as sm
 import numpy as np
 import re
+import json
+
 
 
 def get_ff_factors(num_factors = 3 , frequency = 'daily', in_percentages = False):
@@ -121,3 +123,31 @@ def get_ff_factors(num_factors = 3 , frequency = 'daily', in_percentages = False
         return ff_data
     else:
         return ff_data / 100
+    
+
+class LmcdVectorizer:
+    def __init__(self, json_path="../data/LMcD_word_list.json"):
+        self.sentiment_dictionary = None
+        self.json_path = json_path
+
+    def load_dictionary(self):
+        if self.sentiment_dictionary is None:
+            with open(self.json_path, "r") as file:
+                self.sentiment_dictionary = json.load(file)
+
+    def vectorize(self, document, raw_counts=False, normalize=False):
+        self.load_dictionary()
+
+        categories = list(self.sentiment_dictionary.keys())
+        counts = []
+        for category in categories:
+            counts.append(len([word for word in document if word in self.sentiment_dictionary[category]]))
+
+        if normalize:
+            counts = [value / len(document) for value in counts]
+
+        if raw_counts:
+            return counts
+        else:
+            return pd.DataFrame(data=[counts], columns=categories)
+
