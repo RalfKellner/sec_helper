@@ -7,6 +7,9 @@ import numpy as np
 import re
 import json
 from gensim.utils import simple_preprocess
+import json
+import importlib.resources as pkg_resources
+
 
 
 
@@ -127,21 +130,20 @@ def get_ff_factors(num_factors = 3 , frequency = 'daily', in_percentages = False
     
 
 class LmcdVectorizer:
-    def __init__(self, json_path="./data/LMcD_word_list.json"):
+    def __init__(self):
         self.sentiment_dictionary = None
-        self.json_path = json_path
+        self.load_dictionary()
 
     def load_dictionary(self):
-        if self.sentiment_dictionary is None:
-            with open(self.json_path, "r") as file:
-                self.sentiment_dictionary = json.load(file)
+        with pkg_resources.open_text('sec_helper.data', 'LMcD_word_list.json') as file:
+            self.sentiment_dictionary = json.load(file)
 
     def vectorize(self, document, preprocess = True, raw_counts=False, normalize=False):
         
         if preprocess:
             document = simple_preprocess(document)
         
-        self.load_dictionary()
+        #self.load_dictionary()
 
         categories = list(self.sentiment_dictionary.keys())
         counts = []
