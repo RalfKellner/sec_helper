@@ -8,7 +8,8 @@ setup(
         'requests',
         'pandas',
         'scrapy',
-        'statsmodels'
+        'statsmodels',
+        'gensim'
     ],
     author='Ralf Kellner',
     author_email='ralf.kellner@uni-passau.de',
