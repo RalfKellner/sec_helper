@@ -6,6 +6,7 @@ import statsmodels.api as sm
 import numpy as np
 import re
 import json
+from gensim.utils import simple_preprocess
 
 
 
@@ -135,7 +136,11 @@ class LmcdVectorizer:
             with open(self.json_path, "r") as file:
                 self.sentiment_dictionary = json.load(file)
 
-    def vectorize(self, document, raw_counts=False, normalize=False):
+    def vectorize(self, document, preprocess = True, raw_counts=False, normalize=False):
+        
+        if preprocess:
+            document = simple_preprocess(document)
+        
         self.load_dictionary()
 
         categories = list(self.sentiment_dictionary.keys())
