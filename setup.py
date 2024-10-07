@@ -7,7 +7,8 @@ setup(
     install_requires=[
         'requests',
         'pandas',
-        'scrapy'
+        'scrapy',
+        'statsmodels'
     ],
     author='Ralf Kellner',
     author_email='ralf.kellner@uni-passau.de',
