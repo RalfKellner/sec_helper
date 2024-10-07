@@ -127,7 +127,7 @@ def get_ff_factors(num_factors = 3 , frequency = 'daily', in_percentages = False
     
 
 class LmcdVectorizer:
-    def __init__(self, json_path="../data/LMcD_word_list.json"):
+    def __init__(self, json_path="./data/LMcD_word_list.json"):
         self.sentiment_dictionary = None
         self.json_path = json_path
 

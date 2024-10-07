@@ -4,6 +4,10 @@ setup(
     name='sec_helper_package',
     version='0.1',
     packages=find_packages(),
+    include_package_data=True,  # This includes non-code files defined in MANIFEST.in
+    package_data={
+        'sec_helper': ['data/*.json'],  # Include the JSON files in the data folder
+    },
     install_requires=[
         'requests',
         'pandas',
