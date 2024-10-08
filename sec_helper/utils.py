@@ -9,7 +9,7 @@ import json
 from gensim.utils import simple_preprocess
 import json
 import importlib.resources as pkg_resources
-
+from sklearn.feature_extraction.text import CountVectorizer
 
 
 
@@ -138,24 +138,32 @@ class LmcdVectorizer:
         with pkg_resources.open_text('sec_helper.data', 'LMcD_word_list.json') as file:
             self.sentiment_dictionary = json.load(file)
 
-    def vectorize(self, document, preprocess = True, raw_counts=False, normalize=False):
+    def vectorize(self, document, preprocess = True):
         
         if preprocess:
             document = simple_preprocess(document)
         
-        categories = list(self.sentiment_dictionary.keys())
+        categories = list(self.sentiment_dictionary.keys()) + ["n_words"]
         counts = []
         for category in categories:
             counts.append(len([word for word in document if word in self.sentiment_dictionary[category]]))
 
-        if normalize:
-            counts = [value / len(document) for value in counts]
-
         counts.append(len(document))
-        categories.append("n_words_in_document")
 
-        if raw_counts:
-            return counts
-        else:
-            return pd.DataFrame(data = [counts], columns=categories)
+        return pd.DataFrame(data = [counts], columns=categories)
+        
+
+    def vectorize_by_group(self, filings_for_group_df, text_column):
+
+        counts = pd.DataFrame(pd.NA, index = range(len(filings_for_group_df)), columns=list(self.sentiment_dictionary.keys()) + ["n_words"])
+        for key in self.sentiment_dictionary.keys():
+            word_list = self.sentiment_dictionary[key]
+            count_vectorizer = CountVectorizer(preprocessor = lambda x: " ".join(simple_preprocess(x)), vocabulary = word_list)
+            word_counts = count_vectorizer.fit_transform(filings_for_group_df[text_column].tolist())
+            df = pd.DataFrame(word_counts.toarray(), columns=count_vectorizer.get_feature_names_out())
+            counts.loc[:, key] = df.sum(axis = 1)
+
+        counts.loc[:, "n_words"] = [len(simple_preprocess(doc)) for doc in filings_for_group_df[text_column]]
+
+        return counts
 

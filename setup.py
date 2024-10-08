@@ -13,7 +13,8 @@ setup(
         'pandas',
         'scrapy',
         'statsmodels',
-        'gensim'
+        'gensim',
+        'scikit-learn'
     ],
     author='Ralf Kellner',
     author_email='ralf.kellner@uni-passau.de',
