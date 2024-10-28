@@ -167,7 +167,7 @@ def extract_text_from_html(html_text: str, min_length_extract_from_body: int) ->
     return text
 
 
-def get_8K_filing_and_exhibits(cik: str, user_mail: str, accession_number: str, min_length_extract_from_body: int, raw_html: bool = False, separator_character: str = "-;-") -> str:
+def get_8K_filing_and_exhibits(cik: str, user_mail: str, accession_number: str, min_length_extract_from_body: int, raw_html: bool = False, separator_character: str = "-;-", return_keys = False) -> str:
 
     """
     This function extracts 8K reports and exhibits which start with EX-99.
@@ -185,14 +185,19 @@ def get_8K_filing_and_exhibits(cik: str, user_mail: str, accession_number: str, 
     docs = find_documents(raw_submission)
 
     form_8k_string = ""
+    form_8k_keys = ""
     for key in docs.keys():
-        if re.match("8-K", key) or re.match("EX-99", key): 
+        if re.match("8-K", key) or re.match("EX-", key): 
             form_8k_string += key + ":"
             if raw_html:
                 form_8k_string += docs[key]
             else:
                 form_8k_string += extract_text_from_html(docs[key], min_length_extract_from_body = min_length_extract_from_body)
             form_8k_string += separator_character
-
-    return form_8k_string
+            form_8k_keys += key
+            form_8k_keys += separator_character
+    if return_keys:
+        return form_8k_keys, form_8k_string
+    else:
+        return form_8k_string
 
